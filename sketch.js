@@ -5,6 +5,7 @@ let predictions = [];
 let hands = [];
 let earrings = [];
 let currentStyle = 1; // 預設顯示第一款
+let maskImg;
 
 function preload() {
   // 根據要求載入指定的手勢對應耳環圖片
@@ -13,6 +14,8 @@ function preload() {
   earrings[2] = loadImage('pic/acc3_tassel.png');  // 手勢 3
   earrings[3] = loadImage('pic/acc4_jade.png');    // 手勢 4
   earrings[4] = loadImage('pic/acc5_phoenix.png'); // 手勢 5
+  // 載入臉譜面具圖片
+  maskImg = loadImage('pic/mask/4379901.png');
 }
 
 function setup() {
@@ -67,11 +70,19 @@ function draw() {
     // FaceMesh 索引說明：234 接近右耳耳垂區域，454 接近左耳耳垂區域
     let rightEarlobe = keypoints[234];
     let leftEarlobe = keypoints[454];
+    
+    // 計算臉部的中心點 (鼻尖)、寬度與高度，以便繪製面具
+    let noseTip = keypoints[1];
+    let faceWidth = dist(keypoints[234][0], keypoints[234][1], keypoints[454][0], keypoints[454][1]);
+    let faceHeight = dist(keypoints[10][0], keypoints[10][1], keypoints[152][0], keypoints[152][1]);
 
     // 設定圖片繪製模式為中心
     imageMode(CENTER);
     
-    // 根據目前的款式編號取得圖片 (陣列索引從 0 開始，所以要減 1)
+    // 1. 繪製臉譜面具 (放大約 1.5 倍以確保覆蓋度)
+    image(maskImg, noseTip[0] - vWidth / 2, noseTip[1] - vHeight / 2, faceWidth * 1.5, faceHeight * 1.5);
+
+    // 2. 繪製耳環：根據目前的款式編號取得圖片 (陣列索引從 0 開始，所以要減 1)
     let img = earrings[currentStyle - 1];
     let earringSize = 50;
     image(img, rightEarlobe[0] - vWidth / 2, rightEarlobe[1] - vHeight / 2, earringSize, earringSize);
