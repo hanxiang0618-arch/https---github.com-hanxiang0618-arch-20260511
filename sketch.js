@@ -1,6 +1,12 @@
 let capture;
 let facemesh;
 let predictions = [];
+let earringImg;
+
+function preload() {
+  // 載入耳環圖片
+  earringImg = loadImage('pic/acc1_ring.png');
+}
 
 function setup() {
   // 建立全螢幕畫布
@@ -46,11 +52,14 @@ function draw() {
     let rightEarlobe = keypoints[234];
     let leftEarlobe = keypoints[454];
 
-    fill('yellow');
-    noStroke();
-    // 座標計算：將偵測到的座標減去影像寬高的一半，以符合當前 translate 的中心座標系
-    circle(rightEarlobe[0] - vWidth / 2, rightEarlobe[1] - vHeight / 2, 15);
-    circle(leftEarlobe[0] - vWidth / 2, leftEarlobe[1] - vHeight / 2, 15);
+    // 設定圖片繪製模式為中心
+    imageMode(CENTER);
+    // 繪製耳環圖片，最後兩個參數 (40, 40) 可以調整耳環的大小
+    let earringSize = 50; 
+    image(earringImg, rightEarlobe[0] - vWidth / 2, rightEarlobe[1] - vHeight / 2, earringSize, earringSize);
+    image(earringImg, leftEarlobe[0] - vWidth / 2, leftEarlobe[1] - vHeight / 2, earringSize, earringSize);
+    // 恢復預設繪圖模式（避免影響其他 image 呼叫）
+    imageMode(CORNER);
   }
   pop();
 }
